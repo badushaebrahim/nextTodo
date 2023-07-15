@@ -7,6 +7,16 @@ interface Userlogin{
 	 userPassword : string 
 } 
 
+
+interface loginResposce{
+tokenDetails : tokenDetails
+}
+interface tokenDetails{
+  jwttoken : string,
+  status : string
+}
+
+
 export default  function login() {
 
 	const [user, setUser] = useState<Userlogin>({
@@ -14,22 +24,14 @@ export default  function login() {
 		userName: "",
 	      });
 	      const [loading, setLoading] = useState(false);
-
+const[loadingMessage,setLoadingMessage] = useState<string>('');
 function loginUser(){
-
+setLoading(true)
 	var myHeaders = new Headers();
 myHeaders.append("userCountry", "JO");
 myHeaders.append("uuid", "dolor");
 myHeaders.append("Content-Type", "application/json");
 myHeaders.append("Accept", "*/*");
-
-
-// var requestOptions = {
-// 	method: 'POST',
-// 	headers: myHeaders,
-// 	body: JSON.stringify(user),
-// 	redirect: 'follow'
-//       };
 
 
     var  respose: any   =  fetch("http://localhost:7832/auth-management/v1/auth/user/sign-in", {
@@ -40,12 +42,17 @@ myHeaders.append("Accept", "*/*");
       })
   .then(response => response.text())
   .then(result => {console.log(result)
+   
     const router = useRouter();
     router.push("/home")
-    alert(result)
+    // alert()
+    localStorage.setItem("token",respose.tokenDetails.jwttoken)
 
 })
-  .catch(error => console.log('error', error));
+  .catch(error => {console.log('error', error)
+setLoading(false)
+alert("try again")
+});
 
 
 
